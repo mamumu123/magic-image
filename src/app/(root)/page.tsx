@@ -10,9 +10,8 @@ export default function Home() {
   const t = useTranslations('Index');
   const router = useRouter();
 
-
   const gotoMakeup = () => {
-    router.push('makeup');
+    router.push('styled');
   }
 
   return (

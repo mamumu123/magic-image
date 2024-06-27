@@ -4,7 +4,7 @@
         "desc": "Upload a portrait photo and you can start a magical transformation",
         "try-it": "try it"
     },
-    "Makeup": {
+    "Styled": {
         "title": "WEB MAKEUP",
         "desc": "Upload a portrait photo and you can start a magical transformation",
         "download": "Download",
@@ -17,6 +17,7 @@
         "table-modify": "Modifications",
         "table-op": "Operation Bar",
         "table-detail": "Operation details",
+        "submit": "submit",
         "table-custom": "Custom colors"
     }
 }

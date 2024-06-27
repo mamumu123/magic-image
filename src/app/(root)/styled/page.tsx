@@ -27,29 +27,21 @@ export default function Home() {
     setDemoIndex(index);
   }
 
-  const handleMediaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (!file) {
       console.error('error upload');
       return
     }
-    const reader = new FileReader();
-
-    reader.onloadend = async function () {
-      var base64String = reader.result as string;
-      setLoading(true);
-      // TODO:
-      const { width, height } = await getImageSize(base64String);
-      // setUserLoaderData({
-      //   width,
-      //   height,
-      //   url: base64String,
-      //   data: null,
-      // })
-    }
-
-    reader.readAsDataURL(file);
+    const formData = new FormData();
+    formData.append('files', file);
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+    const result = await response.text();
+    console.log(result);
   }
 
   return (
@@ -91,6 +83,10 @@ export default function Home() {
         </Card>
 
         <div className='flex-1 rounded-md overflow-y-auto'>
+          <Card className='flex-1 flex-col p-[6px] relative flex'>
+            {/* <Button onClick={onSubmit}>{t('submit')}</Button> */}
+          </Card>
+
         </div>
       </div>
     </div >

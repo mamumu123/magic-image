@@ -4,7 +4,7 @@
         "desc": "上传一张人像照片，就可以开始神奇变化",
         "try-it": "动手试试"
     },
-    "Makeup": {
+    "Styled": {
         "title": "在线变装",
         "desc": "上传一张人像照片，就可以开始神奇变化",
         "download": "下载图片",
@@ -17,6 +17,7 @@
         "table-modify": "修改项",
         "table-op": "操作栏",
         "table-detail": "操作详情",
+        "submit": "转换",
         "table-custom": "自定义颜色"
     }
 }

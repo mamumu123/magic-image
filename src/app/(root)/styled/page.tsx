@@ -6,7 +6,6 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { CANVAS_STYLE, EXAMPLES } from '@/constants';
 import { cn } from '@/lib/utils';
-import { getImageSize } from '@/utils';
 
 import { download } from '@/utils/download';
 import { useTranslations } from 'next-intl';
@@ -27,7 +26,7 @@ export default function Home() {
     setDemoIndex(index);
   }
 
-  const handleMediaChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const getUuidByFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (!file) {
@@ -40,8 +39,33 @@ export default function Home() {
       method: 'POST',
       body: formData,
     });
-    const result = await response.text();
-    console.log(result);
+    const result = await response.json();
+    if (result?.status !== 200) {
+      return null
+    }
+    return result.data;
+  }
+
+  const handleMediaChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const path = await getUuidByFile(event);
+    console.log('path', path);
+    if (!path) {
+      console.log(t('upload_error'))
+    }
+  }
+
+  const onTry = async (url?: string) => {
+    const demoUrl = 'https://gitee.com/lemC/picx-images-hosting/raw/master/WechatIMG32460.1aov3aqb5w.jpg' // TODO:
+    const nextUrl = demoUrl;
+    console.log('nextUrl', nextUrl);
+    const response = await fetch('/api/coze-styled', {
+      method: 'POST',
+      body: JSON.stringify({
+        url: nextUrl,
+        id: 4,
+      }),
+    });
+    console.log('response', response);
   }
 
   return (
@@ -79,6 +103,7 @@ export default function Home() {
               </div>
             ))}
           </div>
+          <Button onClick={() => onTry()}>{t('try-it')}</Button>
 
         </Card>
 

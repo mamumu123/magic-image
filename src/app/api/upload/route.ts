@@ -25,10 +25,10 @@ export async function POST(req: NextRequest) {
         console.log('newPath', newPath);
 
         await pump(file.stream() as any, fs.createWriteStream(newPath));
-        return NextResponse.json({ status: "success", data: fileId })
+        return NextResponse.json({ status: 200, data: fileId })
     }
     catch (e) {
         console.error('e', e);
-        return NextResponse.json({ status: "fail", data: e })
+        return NextResponse.json({ status: -1, data: e })
     }
 }

@@ -18,6 +18,7 @@
         "table-op": "Operation Bar",
         "table-detail": "Operation details",
         "submit": "submit",
+        "upload_error": "upload_error",
         "table-custom": "Custom colors"
     }
 }

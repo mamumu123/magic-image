@@ -1,7 +1,7 @@
 "use client";
 
 import { Button, Card, Spinner } from 'flowbite-react';
-import { useRef, useState } from 'react';
+import { useRef, useState, useMemo, useEffect } from 'react';
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { CANVAS_STYLE, EXAMPLES } from '@/constants';
@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 
 import { download } from '@/utils/download';
 import { useTranslations } from 'next-intl';
+import { getImageSize, loadImage } from '@/utils';
 
 export default function Home() {
   const t = useTranslations('Styled');
@@ -17,12 +18,22 @@ export default function Home() {
 
   const [demoIndex, setDemoIndex] = useState(0);
 
+  const [userUploadData, setUserLoaderData] = useState<{ width: number, height: number, url: string, data: any } | null>(null)
+
   const [exampleState, setExampleState] = useState(EXAMPLES);
+
+  const imageDataResult = useMemo(() => {
+    if (userUploadData) {
+      return userUploadData;
+    }
+    return exampleState[demoIndex];
+  }, [demoIndex, exampleState, userUploadData])
 
   const [loading, setLoading] = useState(false);
 
+
   const handleClickDemo = async (index: number) => {
-    const demo = exampleState[index];
+    setUserLoaderData(null);
     setDemoIndex(index);
   }
 
@@ -47,6 +58,27 @@ export default function Home() {
   }
 
   const handleMediaChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      console.error('error upload');
+      return
+    }
+    const reader = new FileReader();
+
+    reader.onloadend = async function () {
+      var base64String = reader.result as string;
+      setLoading(true);
+      const { width, height } = await getImageSize(base64String);
+      setUserLoaderData({
+        width,
+        height,
+        url: base64String,
+        data: null,
+      })
+    }
+
+    reader.readAsDataURL(file);
+
     const path = await getUuidByFile(event);
     console.log('path', path);
     if (!path) {
@@ -67,6 +99,28 @@ export default function Home() {
     });
     console.log('response', response);
   }
+
+  useEffect(() => {
+
+    (async () => {
+      const { width, height, url } = imageDataResult;
+      if (!canvasRef.current || !width || !height || !url) {
+        console.error('canvasRef', canvasRef.current, 'width', width, 'height', height, 'url', url);
+        return;
+      }
+      const ctx = canvasRef.current?.getContext('2d', { willReadFrequently: true });
+      if (!ctx) {
+        console.error('ctx', ctx);
+        return
+      }
+      canvasRef.current.style.width = `${width > height ? CANVAS_STYLE : CANVAS_STYLE * (width / height)}px`;
+      canvasRef.current.style.height = `${width > height ? CANVAS_STYLE * (height / width) : CANVAS_STYLE}px`
+      canvasRef.current.width = width;
+      canvasRef.current.height = height;
+      const imageElement = await loadImage(url);
+      ctx.drawImage(imageElement, 0, 0, width, height);
+    })()
+  })
 
   return (
     <div className={`flex h-full width-full  flex-col`}>

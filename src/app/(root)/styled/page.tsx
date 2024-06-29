@@ -1,15 +1,25 @@
 "use client";
 
-import { Button, Card, Spinner } from 'flowbite-react';
+import { Button, Card, Label, Spinner } from 'flowbite-react';
 import { useRef, useState, useMemo, useEffect } from 'react';
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
-import { CANVAS_STYLE, EXAMPLES } from '@/constants';
+import { CANVAS_STYLE, EXAMPLES, STYLE_LIST } from '@/constants';
 import { cn } from '@/lib/utils';
 
 import { download } from '@/utils/download';
 import { useTranslations } from 'next-intl';
 import { getImageSize, loadImage } from '@/utils';
+
+import {
+  Select,
+  SelectContent,
+  // SelectGroup,
+  SelectItem,
+  // SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const host = process.env.NEXT_PUBLIC_HOST || '';
 
@@ -26,6 +36,8 @@ export default function Home() {
 
   // result
   const [currentUrl, setCurrentUrl] = useState(`${host}/${EXAMPLES[demoIndex].url}`);
+
+  const [style, setStyle] = useState(STYLE_LIST[0].value);
 
   const handleUrl = async (url: string) => {
     const noHost = url.startsWith('/');
@@ -96,13 +108,19 @@ export default function Home() {
     setLoading(false);
   }
 
+
+  const handleFieldValue = (value: string) => {
+
+    setStyle(value);
+  };
+
   const onTry = async () => {
     setLoading(true);
     const response = await fetch('/api/coze-styled', {
       method: 'POST',
       body: JSON.stringify({
-        url: imageDataResult.url,
-        id: 4,
+        url: currentUrl,
+        id: style,
       }),
     });
     console.log('response', response);
@@ -130,6 +148,8 @@ export default function Home() {
       ctx.drawImage(imageElement, 0, 0, width, height);
     })()
   })
+
+  console.log('style', style);
 
   return (
     <div className={`flex h-full width-full  flex-col`}>
@@ -172,7 +192,37 @@ export default function Home() {
         <div className='flex-1 flex-col rounded-md overflow-y-auto'>
           <Card className='h-full p-[6px] relative flex'>
             <div className='h-full w-full'>
-              <Input className={'mb-3'} value={currentUrl} onChange={(e) => setCurrentUrl(e.target.value)} />
+
+              <div className={'flex  items-center gap-4 mb-3'}>
+                <Label htmlFor="current-url" className={'text-nowrap'}>{t('current-url')}</Label>
+                <Input className={'flex-1'} id='current-url' value={currentUrl} onChange={(e) => setCurrentUrl(e.target.value)} />
+              </div>
+
+              <div className={'flex  items-center gap-4 mb-3'}>
+                <Label htmlFor="current-url" className={'text-nowrap'}>{t('style-id')}</Label>
+                <Select onValueChange={handleFieldValue} disabled={loading} defaultValue={style}>
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder={t('style-id')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {/* <SelectGroup> */}
+                    {/* <SelectLabel>{style.name}</SelectLabel> */}
+                    {STYLE_LIST.map((item) => (
+                      <SelectItem
+                        key={item.value}
+                        value={item.value} // *stringify the object here
+                        textValue={item.name}
+                        defaultValue="Select"
+                      >
+                        {item.name}
+                      </SelectItem>
+                    ))}
+                    {/* </SelectGroup> */}
+
+                  </SelectContent>
+                </Select>
+              </div>
+
               <Button color={'blue'} className='w-full' onClick={() => onTry()} disabled={loading}>{t('start')}</Button>
             </div>
           </Card>

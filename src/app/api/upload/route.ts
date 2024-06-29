@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
         const formData = await req.formData();
         const file = formData.getAll('files')[0] as File;
 
-        const uploadDir = path.join(__dirname, 'uploads');
+        const uploadDir = path.join(__dirname, '..', 'uploads');
 
         // 确保上传目录存在
         if (!fs.existsSync(uploadDir)) {
@@ -22,10 +22,10 @@ export async function POST(req: NextRequest) {
         const fileId = nanoid()
 
         const newPath = path.join(uploadDir, fileId);
-        console.log('newPath', newPath);
+        const resPath = `${process.env.NEXT_PUBLIC_HOST}/api/get-image?id=${fileId}`
 
         await pump(file.stream() as any, fs.createWriteStream(newPath));
-        return NextResponse.json({ status: 200, data: fileId })
+        return NextResponse.json({ status: 200, data: resPath })
     }
     catch (e) {
         console.error('e', e);

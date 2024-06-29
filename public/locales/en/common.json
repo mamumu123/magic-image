@@ -1,24 +1,20 @@
 {
     "Index": {
-        "title": "WEB MAKEUP",
+        "title": "Image Stylization",
         "desc": "Upload a portrait photo and you can start a magical transformation",
         "try-it": "try it"
     },
     "Styled": {
-        "title": "WEB MAKEUP",
+        "title": "Image Stylization",
         "desc": "Upload a portrait photo and you can start a magical transformation",
         "download": "Download",
         "try-it": "Try the demo",
         "dealing": "Processing files...",
-        "hair-color": "Hair Color",
-        "lip-color": "Lipstick Color",
-        "default-color": "Default Color",
-        "custom-color": "Custom",
         "table-modify": "Modifications",
         "table-op": "Operation Bar",
         "table-detail": "Operation details",
         "submit": "submit",
-        "upload_error": "upload_error",
-        "table-custom": "Custom colors"
+        "start": "start",
+        "upload_error": "upload_error"
     }
 }

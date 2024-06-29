@@ -11,26 +11,44 @@ import { download } from '@/utils/download';
 import { useTranslations } from 'next-intl';
 import { getImageSize, loadImage } from '@/utils';
 
+const host = process.env.NEXT_PUBLIC_HOST || '';
+
 export default function Home() {
+  // i18-n
   const t = useTranslations('Styled');
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const [demoIndex, setDemoIndex] = useState(0);
-
-  const [userUploadData, setUserLoaderData] = useState<{ width: number, height: number, url: string, data: any } | null>(null)
-
-  const [exampleState, setExampleState] = useState(EXAMPLES);
-
-  const imageDataResult = useMemo(() => {
-    if (userUploadData) {
-      return userUploadData;
-    }
-    return exampleState[demoIndex];
-  }, [demoIndex, exampleState, userUploadData])
-
   const [loading, setLoading] = useState(false);
 
+  // demo
+  const [demoIndex, setDemoIndex] = useState(0);
+
+  // result
+  const [currentUrl, setCurrentUrl] = useState(`${host}/${EXAMPLES[demoIndex].url}`);
+
+  const handleUrl = async (url: string) => {
+    const noHost = url.startsWith('/');
+    console.log('handleUrl', url, 'noHost', noHost, 'host', host);
+    if (noHost) {
+      setCurrentUrl(`${host}${url}`);
+      return;
+    }
+    setCurrentUrl(url);
+  }
+
+  const [userUploadData, setUserLoaderData] = useState<{ width: number, height: number, url: string } | null>(null)
+  const imageDataResult = useMemo(() => {
+    if (userUploadData) {
+      handleUrl(userUploadData.url);
+      return userUploadData;
+    }
+    handleUrl(EXAMPLES[demoIndex].url);
+
+    return EXAMPLES[demoIndex];
+  }, [demoIndex, userUploadData]);
+
+  console.log('userUploadData', userUploadData);
 
   const handleClickDemo = async (index: number) => {
     setUserLoaderData(null);
@@ -63,41 +81,32 @@ export default function Home() {
       console.error('error upload');
       return
     }
-    const reader = new FileReader();
-
-    reader.onloadend = async function () {
-      var base64String = reader.result as string;
-      setLoading(true);
-      const { width, height } = await getImageSize(base64String);
-      setUserLoaderData({
-        width,
-        height,
-        url: base64String,
-        data: null,
-      })
-    }
-
-    reader.readAsDataURL(file);
 
     const path = await getUuidByFile(event);
-    console.log('path', path);
+    const { width, height } = await getImageSize(path);
+    setUserLoaderData({
+      width,
+      height,
+      url: path,
+    })
+
     if (!path) {
       console.log(t('upload_error'))
     }
+    setLoading(false);
   }
 
-  const onTry = async (url?: string) => {
-    const demoUrl = 'https://gitee.com/lemC/picx-images-hosting/raw/master/WechatIMG32460.1aov3aqb5w.jpg' // TODO:
-    const nextUrl = demoUrl;
-    console.log('nextUrl', nextUrl);
+  const onTry = async () => {
+    setLoading(true);
     const response = await fetch('/api/coze-styled', {
       method: 'POST',
       body: JSON.stringify({
-        url: nextUrl,
+        url: imageDataResult.url,
         id: 4,
       }),
     });
     console.log('response', response);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -139,12 +148,12 @@ export default function Home() {
           </div>
           <div className='w-full relative flex justify-between items-center'>
             <Input disabled={loading} type="file" className='h-[60px] flex-1' onChange={handleMediaChange} accept='image/*' />
-            <Button className='flex-1' disabled={loading} onClick={() => download(canvasRef)}>{t('download')}</Button>
+            <Button disabled={loading} onClick={() => download(canvasRef)}>{t('download')}</Button>
           </div>
 
           <div>{t('try-it')} </div>
           <div className='h-[100px] w-full flex  items-center gap-5 justify-start overflow-x-auto '>
-            {exampleState.map((it, index) => (
+            {EXAMPLES.map((it, index) => (
               <div
                 key={it.url}
                 onClick={() => handleClickDemo(index)}
@@ -157,13 +166,15 @@ export default function Home() {
               </div>
             ))}
           </div>
-          <Button onClick={() => onTry()}>{t('try-it')}</Button>
 
         </Card>
 
-        <div className='flex-1 rounded-md overflow-y-auto'>
-          <Card className='flex-1 flex-col p-[6px] relative flex'>
-            {/* <Button onClick={onSubmit}>{t('submit')}</Button> */}
+        <div className='flex-1 flex-col rounded-md overflow-y-auto'>
+          <Card className='h-full p-[6px] relative flex'>
+            <div className='h-full w-full'>
+              <Input className={'mb-3'} value={currentUrl} onChange={(e) => setCurrentUrl(e.target.value)} />
+              <Button color={'blue'} className='w-full' onClick={() => onTry()} disabled={loading}>{t('start')}</Button>
+            </div>
           </Card>
 
         </div>

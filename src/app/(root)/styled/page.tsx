@@ -14,12 +14,11 @@ import { getImageSize, loadImage } from '@/utils';
 import {
   Select,
   SelectContent,
-  // SelectGroup,
   SelectItem,
-  // SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { STATUS_SUCCESS } from '@/constants/end';
 
 const host = process.env.NEXT_PUBLIC_HOST || '';
 
@@ -35,22 +34,21 @@ export default function Home() {
   const [demoIndex, setDemoIndex] = useState(0);
 
   // result
-  const [currentUrl, setCurrentUrl] = useState(`${host}/${EXAMPLES[demoIndex].url}`);
+  const [currentUrl, setCurrentUrl] = useState(`${EXAMPLES[demoIndex].url}`);
 
   const [style, setStyle] = useState(STYLE_LIST[0].value);
 
   const handleUrl = async (url: string) => {
-    const noHost = url.startsWith('/');
-    console.log('handleUrl', url, 'noHost', noHost, 'host', host);
-    if (noHost) {
-      setCurrentUrl(`${host}${url}`);
-      return;
-    }
     setCurrentUrl(url);
   }
 
+  const [result, setResult] = useState<{ width: number, height: number, url: string } | null>(null);
+
   const [userUploadData, setUserLoaderData] = useState<{ width: number, height: number, url: string } | null>(null)
   const imageDataResult = useMemo(() => {
+    if (result) {
+      return result;
+    }
     if (userUploadData) {
       handleUrl(userUploadData.url);
       return userUploadData;
@@ -58,12 +56,11 @@ export default function Home() {
     handleUrl(EXAMPLES[demoIndex].url);
 
     return EXAMPLES[demoIndex];
-  }, [demoIndex, userUploadData]);
-
-  console.log('userUploadData', userUploadData);
+  }, [demoIndex, userUploadData, result]);
 
   const handleClickDemo = async (index: number) => {
     setUserLoaderData(null);
+    setResult(null);
     setDemoIndex(index);
   }
 
@@ -96,6 +93,7 @@ export default function Home() {
 
     const path = await getUuidByFile(event);
     const { width, height } = await getImageSize(path);
+    setResult(null);
     setUserLoaderData({
       width,
       height,
@@ -116,14 +114,57 @@ export default function Home() {
 
   const onTry = async () => {
     setLoading(true);
+    if (!currentUrl) {
+      console.error('error upload');
+      return
+    }
+
+    // example
+    const currentIsExample = EXAMPLES.find((item) => item.url === currentUrl);
+    if (currentIsExample) {
+      const { data } = currentIsExample;
+      // @ts-ignore
+      const result = data?.[style] as string;
+      if (result) {
+        setTimeout(async () => {
+          const { width, height } = await getImageSize(result);
+          setResult({
+            url: result,
+            width: width,
+            height: height,
+          })
+          setLoading(false);
+        }, 1000);
+      }
+      return;
+    }
+
+
+    // localUpload
+    let resultUrl = currentUrl;
+    const noHost = currentUrl.startsWith('/');
+    if (noHost) {
+      resultUrl = `${host}${currentUrl}`;
+    }
+
     const response = await fetch('/api/coze-styled', {
       method: 'POST',
       body: JSON.stringify({
-        url: currentUrl,
+        url: resultUrl,
         id: style,
       }),
     });
     console.log('response', response);
+    const { data, status } = (await response.json()) || {};
+    if (status === STATUS_SUCCESS) {
+      const { width, height } = await getImageSize(data);
+      setResult({
+        url: data,
+        width: width,
+        height: height,
+      })
+    }
+
     setLoading(false);
   }
 
@@ -148,8 +189,6 @@ export default function Home() {
       ctx.drawImage(imageElement, 0, 0, width, height);
     })()
   })
-
-  console.log('style', style);
 
   return (
     <div className={`flex h-full width-full  flex-col`}>

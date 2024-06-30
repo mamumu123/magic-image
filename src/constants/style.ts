@@ -1,22 +1,22 @@
 export const STYLE_LIST = [
     {
         value: '0',
-        name: '0aa',
+        name: '毛毡',
     },
     {
         value: '1',
-        name: 'vbb',
+        name: '粘土',
     },
     {
         value: '2',
-        name: 'ccc',
+        name: '积木',
     },
     {
         value: '3',
-        name: 'ddd',
+        name: '美漫',
     },
     {
         value: '4',
-        name: 'eee',
+        name: '玉石风格',
     }
 ]

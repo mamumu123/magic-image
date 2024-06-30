@@ -7,7 +7,7 @@
     "Styled": {
         "title": "图片魔法",
         "desc": "上传一张人像照片，就可以开始神奇变化",
-        "download": "Download",
+        "download": "下载",
         "try-it": "试试 demo",
         "dealing": "处理文件中...",
         "table-modify": "修改项",
@@ -15,6 +15,8 @@
         "table-detail": "操作详情",
         "submit": "转换",
         "start": "开始",
-        "upload_error": "上传错误"
+        "upload_error": "上传错误",
+        "current-url": "图片链接",
+        "style-id": "风格 Id"
     }
 }

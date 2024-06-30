@@ -15,8 +15,8 @@
         "table-detail": "Operation details",
         "submit": "submit",
         "start": "start",
-        "current-url": "url",
-        "style-id": "S tyle Id",
+        "current-url": "Link",
+        "style-id": "Style Id",
         "upload_error": "upload_error"
     }
 }

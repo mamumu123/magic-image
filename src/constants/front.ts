@@ -8,7 +8,7 @@ export enum BG_TYPE {
 
 export const API_FACE = `/api/face`;
 
-export const GIT_REPO = 'https://github.com/mamumu123/avatar-change';
+export const GIT_REPO = 'https://github.com/mamumu123/magic-image';
 
 export const FAV_ICON = 'https://github.githubassets.com/favicons/favicon.svg';
 

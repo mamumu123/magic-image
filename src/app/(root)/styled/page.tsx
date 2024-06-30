@@ -232,8 +232,23 @@ export default function Home() {
         <div className='flex-1 flex-col rounded-md overflow-y-auto'>
           <Card className='h-full p-[6px] relative flex'>
             <div className='h-full w-full'>
-
-              <div className={'flex  items-center gap-4 mb-3'}>
+              <div>
+                <div>
+                  {t('usage-title')}
+                </div>
+                <ul className=''>
+                  <li>
+                    {t('usage1')}
+                  </li>
+                  <li>
+                    {t('usage2')}
+                  </li>
+                  <li>
+                    {t('usage3')}
+                  </li>
+                </ul>
+              </div>
+              <div className={'flex  items-center gap-4 mb-3 mt-5'}>
                 <Label htmlFor="current-url" className={'text-nowrap'}>{t('current-url')}</Label>
                 <Input className={'flex-1'} id='current-url' value={currentUrl} onChange={(e) => setCurrentUrl(e.target.value)} />
               </div>
@@ -245,8 +260,6 @@ export default function Home() {
                     <SelectValue placeholder={t('style-id')} />
                   </SelectTrigger>
                   <SelectContent>
-                    {/* <SelectGroup> */}
-                    {/* <SelectLabel>{style.name}</SelectLabel> */}
                     {STYLE_LIST.map((item) => (
                       <SelectItem
                         key={item.value}
@@ -257,8 +270,6 @@ export default function Home() {
                         {item.name}
                       </SelectItem>
                     ))}
-                    {/* </SelectGroup> */}
-
                   </SelectContent>
                 </Select>
               </div>

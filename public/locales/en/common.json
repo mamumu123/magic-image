@@ -17,6 +17,10 @@
         "start": "start",
         "current-url": "Link",
         "style-id": "Style Id",
+        "usage-title": "Usage: You can try the following methods",
+        "usage1": "Switch to 「demo」 in the bottom left corner, select 「style」, and then click 「start」; ",
+        "usage2": "Enter an online image address directly in the 「Link」, select 「style」, and then click 「start」;",
+        "usage3": "Click 「Upload」 in the bottom left corner, select 「Style」, and then click 「Start」",
         "upload_error": "upload_error"
     }
 }

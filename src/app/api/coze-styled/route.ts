@@ -35,11 +35,15 @@ export async function POST(req: NextRequest) {
         const data = await req.json();
         const { url, id } = data || {};
         const body = JSON.stringify({
-            "conversation_id": "123",
+            "conversation_id": "123344",
             "user": "29032201862555",
             "bot_id": BOT_ID,
-            "query": `这是我提供的照片：base_url: ${url}, style_id: ${id} `,
+            "query": `这是我提供的照片: image_url: ${url}, style_id: ${id} `,
             "stream": false,
+            "custom_variables": {
+                "image_url": `${url}`,
+                "style_id": `${id}`
+            }
         })
         const response = await fetch(HTTP_URL, {
             method: 'POST',

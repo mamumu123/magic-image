@@ -78,7 +78,7 @@ export default function Home() {
       body: formData,
     });
     const result = await response.json();
-    if (result?.status !== 200) {
+    if (result?.status !== STATUS_SUCCESS) {
       return null
     }
     return result.data;
@@ -92,6 +92,10 @@ export default function Home() {
     }
 
     const path = await getUuidByFile(event);
+    if (!path) {
+      setLoading(false);
+      return;
+    }
     const { width, height } = await getImageSize(path);
     setResult(null);
     setUserLoaderData({
@@ -99,10 +103,6 @@ export default function Home() {
       height,
       url: path,
     })
-
-    if (!path) {
-      console.log(t('upload_error'))
-    }
     setLoading(false);
   }
 
@@ -154,9 +154,10 @@ export default function Home() {
         id: style,
       }),
     });
-    console.log('response', response);
+
     const { data, status } = (await response.json()) || {};
-    if (status === STATUS_SUCCESS) {
+    console.log('response', response);
+    if (status === STATUS_SUCCESS && data) {
       const { width, height } = await getImageSize(data);
       setResult({
         url: data,

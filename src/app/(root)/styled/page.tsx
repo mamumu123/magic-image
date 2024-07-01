@@ -207,7 +207,6 @@ export default function Home() {
             }
           </div>
           <div className='w-full relative flex justify-between items-center'>
-            <Input disabled={loading} type="file" className='h-[60px] flex-1' onChange={handleMediaChange} accept='image/*' />
             <Button disabled={loading} onClick={() => download(canvasRef)}>{t('download')}</Button>
           </div>
 

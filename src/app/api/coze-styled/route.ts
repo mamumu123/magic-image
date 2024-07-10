@@ -3,7 +3,7 @@ import { STATUS_SUCCESS } from "@/constants/end";
 import fetch from 'node-fetch';
 
 const HTTP_URL = 'https://api.coze.cn/open_api/v2/chat';
-const BOT_ID = '7383904589537935371';
+const BOT_ID = process.env.BOT_ID;
 const token = process.env.COZE_TOKEN;
 
 export const maxDuration = 60; // This function can run for a maximum of 5 seconds

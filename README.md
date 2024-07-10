@@ -112,7 +112,14 @@ export function GET(request: Request) {
 
 ## Getting Started
 
-First, run the development server:
+First, set the environment variables:
+
+```bash
+export BOT_ID=123456
+export COZE_TOKEN=pat_xxx
+```
+
+Second, run the development server:
 
 ```bash
 npm run dev
